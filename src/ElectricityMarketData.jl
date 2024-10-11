@@ -1,10 +1,16 @@
 module ElectricityMarketData
 
 using Dates
+using TimeZones
 using Logging
 using Tables
 
-export ElectricityMarket, list_markets, available_time_series, get_rt_lmp_raw_data, rt_lmp_data
+import TimeZones: ZonedDateTime
+
+export ElectricityMarket, list_markets, available_time_series, get_real_time_lmp_raw_data, 
+    get_real_time_lmp,
+    get_timezone,
+    ZonedDateTime
 
 """
     ElectricityMarket
@@ -31,34 +37,52 @@ Ex:
 ```
 [
     (name="RT-load", unit="MW", resolution=Hour(1), first_date=DateTime("2021-01-01T00:00:00"), method=rt_load_data, description="Real-time load data"),
-    (name="RT-LMP", unit="MWh", resolution=Hour(1), first_date=DateTime("2021-01-01T00:00:00"), method=rt_lmp_data, description="Real-time Locational Marginal Price data"),
+    (name="RT-LMP", unit="MWh", resolution=Hour(1), first_date=DateTime("2021-01-01T00:00:00"), method=get_real_time_lmp, description="Real-time Locational Marginal Price data"),
 ]
 ```
 """
-function available_time_series(market::ElectricityMarket)
+function available_time_series(market::ElectricityMarket) :: Vector{NamedTuple}
     @warn "No time series registered for $(market)"
     return Vector{NamedTuple}()
 end
 
+function get_timezone(market::ElectricityMarket) :: TimeZone
+    throw(MethodError(get_timezone, (market,)))
+end
+
+function ZonedDateTime(date::DateTime, market::ElectricityMarket) :: ZonedDateTime
+    ZonedDateTime(date, get_timezone(market))
+end
+
 """
-    get_rt_lmp_raw_data(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString=mktempdir(), parser::Function=(args...) -> nothing)
+    get_real_time_lmp_raw_data(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=mktempdir(), parser::Function=(args...) -> nothing)
 
 Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
 Parse the data using `parser` if provided.
 """
-function get_rt_lmp_raw_data(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString="", parser::Function=(args...) -> nothing)
-    throw(MethodError(get_rt_lmp_raw_data, (market, DateTime, DateTime)))
+function get_real_time_lmp_raw_data(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString="", parser::Function=(args...) -> nothing) :: Nothing
+    throw(MethodError(get_real_time_lmp_raw_data, (market, start_date, end_date)))
+end
+
+function get_real_time_lmp_raw_data(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString="", parser::Function=(args...) -> nothing) :: Nothing
+    @warn "Converting DateTime to ZonedDateTime using the timezone of $(market)"
+    get_real_time_lmp_raw_data(market, ZonedDateTime(start_date, get_timezone(market)), ZonedDateTime(end_date, get_timezone(market)); folder=folder, parser=parser)
 end
 
 """
-    rt_lmp_data(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString=mktempdir(), parser::Function=(args...) -> nothing) :: Tables.AbstractTable
+    get_real_time_lmp(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=mktempdir(), parser::Function=(args...) -> nothing) :: Tables.table
 
 Return a table with Real-Time (RT) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
 Parse the data using `parser` if provided.
 If the data is not available, download it and save it in `folder`. 
 """
-function rt_lmp_data(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString="", parser::Function=(args...) -> nothing)
-    throw(MethodError(rt_lmp_data, (market, DateTime, DateTime)))
+function get_real_time_lmp(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString="", parser::Function=(args...) -> nothing)
+    throw(MethodError(get_real_time_lmp, (market, start_date, end_date)))
+end
+
+function get_real_time_lmp(market::ElectricityMarket, start_date::DateTime, end_date::DateTime; folder::AbstractString="", parser::Function=(args...) -> nothing)
+    @warn "Converting DateTime to ZonedDateTime using the timezone of $(market)"
+    get_real_time_lmp(market, ZonedDateTime(start_date, get_timezone(market)), ZonedDateTime(end_date, get_timezone(market)); folder=folder, parser=parser)
 end
 
 end # module
