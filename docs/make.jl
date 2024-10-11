@@ -5,7 +5,7 @@ DocMeta.setdocmeta!(ElectricityMarketData, :DocTestSetup, :(using ElectricityMar
 
 makedocs(;
     modules=[ElectricityMarketData],
-    authors="Andrew Rosemberg <arosemberg3@gatech.edu>, Andre Ramos <andreramosfdc@gmail.com> and contributors",
+    authors="Andrew Rosemberg <arosemberg3@gatech.edu>, Andre Ramos <andreramosfdc@gmail.com> and Thiago Novaes <thiagonovaesb@poli.ufrj.br> and contributors",
     sitename="ElectricityMarketData.jl",
     format=Documenter.HTML(;
         canonical="https://LAMPSPUC.github.io/ElectricityMarketData.jl",
