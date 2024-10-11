@@ -7,7 +7,7 @@ import ElectricityMarketData: get_timezone
 
 @testset "ElectricityMarketData.jl" begin
     @testset "MockMarket" begin
-        struct MockMarket <: ElectricityMarket 
+        struct MockMarket <: ElectricityMarket
             url::String
             timezone::TimeZone
         end
@@ -15,7 +15,7 @@ import ElectricityMarketData: get_timezone
         MockMarket() = MockMarket("https://example.com", tz"UTC")
 
         market = MockMarket()
-        
+
         @testset "list_markets" begin
             @test list_markets() isa Vector{Symbol}
         end
@@ -28,7 +28,7 @@ import ElectricityMarketData: get_timezone
             @test_throws MethodError get_timezone(market)
         end
 
-        function ElectricityMarketData.get_timezone(market::MockMarket) :: TimeZone
+        function ElectricityMarketData.get_timezone(market::MockMarket)::TimeZone
             return market.timezone
         end
 
@@ -39,15 +39,31 @@ import ElectricityMarketData: get_timezone
         end
 
         @testset "get_real_time_lmp_raw_data" begin
-            @test_throws MethodError get_real_time_lmp_raw_data(market, DateTime("2021-01-01T00:00:00"), DateTime("2021-01-01T00:00:00"))
+            @test_throws MethodError get_real_time_lmp_raw_data(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
 
-            @test_throws MethodError get_real_time_lmp_raw_data(market, DateTime("2021-01-01T00:00:00", tz"UTC"), DateTime("2021-01-01T00:00:00", tz"UTC"))
+            @test_throws MethodError get_real_time_lmp_raw_data(
+                market,
+                DateTime("2021-01-01T00:00:00", tz"UTC"),
+                DateTime("2021-01-01T00:00:00", tz"UTC"),
+            )
         end
 
         @testset "get_real_time_lmp" begin
-            @test_throws MethodError get_real_time_lmp(market, DateTime("2021-01-01T00:00:00"), DateTime("2021-01-01T00:00:00"))
+            @test_throws MethodError get_real_time_lmp(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
 
-            @test_throws MethodError get_real_time_lmp(market, DateTime("2021-01-01T00:00:00", tz"UTC"), DateTime("2021-01-01T00:00:00", tz"UTC"))
+            @test_throws MethodError get_real_time_lmp(
+                market,
+                DateTime("2021-01-01T00:00:00", tz"UTC"),
+                DateTime("2021-01-01T00:00:00", tz"UTC"),
+            )
         end
     end
 end
