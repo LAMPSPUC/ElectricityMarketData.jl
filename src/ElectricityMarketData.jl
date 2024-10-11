@@ -13,9 +13,11 @@ export ElectricityMarket,
     get_real_time_lmp_raw_data,
     get_real_time_lmp,
     get_timezone,
-    ZonedDateTime
+    ZonedDateTime,
+    MisoMarket
 
 
-include("ElectricityMarket.jl")
+include("electricity_market.jl")
+include("miso_market.jl")
 
 end # module
