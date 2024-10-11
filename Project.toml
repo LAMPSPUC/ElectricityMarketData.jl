@@ -1,6 +1,6 @@
 name = "ElectricityMarketData"
 uuid = "b0cd3f9d-d3c7-4edf-bab9-a3123bf8ae8c"
-authors = ["Andrew Rosemberg <arosemberg3@gatech.edu>, Andre Ramos <andreramosfdc@gmail.com> and contributors"]
+authors = ["Andrew Rosemberg <arosemberg3@gatech.edu>, Andre Ramos <andreramosfdc@gmail.com> and Thiago Novaes <thiagonovaesb@poli.ufrj.br>"]
 version = "1.0.0-DEV"
 
 [deps]
