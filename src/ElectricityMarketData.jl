@@ -5,6 +5,10 @@ using TimeZones
 using Logging
 using Tables
 using HTTP
+using CSV
+using DataFrames
+using Dates
+using JSON
 
 import TimeZones: ZonedDateTime
 
@@ -18,5 +22,8 @@ export ElectricityMarket,
 
 include("helpers/http_helper.jl")
 include("markets/electricity_market.jl")
+include("pjm/urls.jl")
+include("pjm/utils.jl")
+include("pjm/parser.jl")
 
 end # module

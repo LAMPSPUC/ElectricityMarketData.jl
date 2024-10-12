@@ -3,9 +3,9 @@
 
 Downloads the return of `url` if the file `filename` does not exist, and saves it in `filename`.
 """
-function _download(url::AbstractString, filename::AbstractString)::Nothing
+function _download(url::AbstractString, filename::AbstractString, headers::Dict = Dict())::Nothing
     if !isfile(filename)
-        response = HTTP.get(url)
+        response = HTTP.get(url, headers=headers)
         open(filename, "w") do file
             write(file, response.body)
         end
