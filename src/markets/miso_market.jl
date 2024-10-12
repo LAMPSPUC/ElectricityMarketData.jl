@@ -25,8 +25,15 @@ Ex:
 """
 function available_time_series(::MisoMarket)::Vector{NamedTuple}
     return [
-                (name="RT-LMP", unit="\$/MWh", resolution=Hour(1), first_date=DateTime("2021-01-01T00:00:00"), method=get_real_time_lmp, description="Real-time Locational Marginal Price data"),
-           ]
+        (
+            name = "RT-LMP",
+            unit = "\$/MWh",
+            resolution = Hour(1),
+            first_date = DateTime("2021-01-01T00:00:00"),
+            method = get_real_time_lmp,
+            description = "Real-time Locational Marginal Price data",
+        ),
+    ]
 end
 
 """
@@ -56,11 +63,11 @@ function _async_get_raw_data(
     stop = _zoned_date_time_to_yyyymmdd(end_date, market.timezone)
     tasks = Vector{Task}()
     base_url = joinpath(market.url, url_folder)
-    for date in start:stop
-       file = string(date) * file_base
-       url = base_url * "/" * file
-       path = joinpath(directory, file)
-       push!(tasks, _async_download(url, joinpath(url, path)))
+    for date = start:stop
+        file = string(date) * file_base
+        url = base_url * "/" * file
+        path = joinpath(directory, file)
+        push!(tasks, _async_download(url, joinpath(url, path)))
     end
     return tasks
 end
@@ -78,7 +85,14 @@ function get_real_time_lmp_raw_data(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )::Nothing
-    tasks = _async_get_raw_data(market, "marketreports", "_rt_lmp_final.csv", start_date, end_date; folder = folder)
+    tasks = _async_get_raw_data(
+        market,
+        "marketreports",
+        "_rt_lmp_final.csv",
+        start_date,
+        end_date;
+        folder = folder,
+    )
     for task in tasks
         wait(task)
     end
@@ -100,13 +114,22 @@ function get_real_time_lmp(
     parser::Function = (args...) -> nothing,
 )
     # TODO
-    dict = Dict{String, Vector{Float64}}()
-    tasks = _async_get_raw_data(market, "marketreports", "_rt_lmp_final.csv", start_date, end_date; folder = folder)
+    dict = Dict{String,Vector{Float64}}()
+    tasks = _async_get_raw_data(
+        market,
+        "marketreports",
+        "_rt_lmp_final.csv",
+        start_date,
+        end_date;
+        folder = folder,
+    )
     for task in tasks
         file_name = fetch(task)
-        df = CSV.read(file_name, DataFrame)[4:end,:]
+        df = CSV.read(file_name, DataFrame)[4:end, :]
         for row in eachrow(df)
-            if (row[3] != "LMP") continue end
+            if (row[3] != "LMP")
+                continue
+            end
             vec = [parse(Float64, x) for x in values(row[4:27])]
             if !haskey(dict, row[1])
                 dict[row[1]] = vec
