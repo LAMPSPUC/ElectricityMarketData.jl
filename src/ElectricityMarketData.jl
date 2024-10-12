@@ -4,6 +4,7 @@ using Dates
 using TimeZones
 using Logging
 using Tables
+using HTTP
 
 import TimeZones: ZonedDateTime
 
@@ -15,7 +16,7 @@ export ElectricityMarket,
     get_timezone,
     ZonedDateTime
 
-
-include("ElectricityMarket.jl")
+include("helpers/http_helper.jl")
+include("markets/electricity_market.jl")
 
 end # module
