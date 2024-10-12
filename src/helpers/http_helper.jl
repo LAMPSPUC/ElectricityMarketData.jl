@@ -10,6 +10,7 @@ function _download(url::String, filename::String)::Nothing
             write(file, response.body)
         end
     end
+    return nothing
 end
 
 """

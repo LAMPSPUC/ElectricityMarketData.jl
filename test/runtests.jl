@@ -2,6 +2,7 @@ using ElectricityMarketData
 using Dates
 using TimeZones
 using Test
+using HTTP
 
 import ElectricityMarketData: get_timezone
 
