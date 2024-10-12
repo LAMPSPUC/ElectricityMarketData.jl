@@ -1,11 +1,11 @@
 """
-    _mkdir(path::AbstractString)::Nothing
+    _mkdir(path::AbstractString)::AbstractString
 
 Create directory if it does not exist.
 """
-function _mkdir(path::AbstractString)::Nothing
+function _mkdir(path::AbstractString)::AbstractString
     if !isdir(path)
-        mkdir(path)
+        return mkdir(path)
     end
-    return nothing
+    return path
 end

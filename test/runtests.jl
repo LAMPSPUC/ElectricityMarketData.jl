@@ -6,5 +6,7 @@ using HTTP
 
 import ElectricityMarketData: get_timezone
 
-include("http_helper_test.jl")
-include("electricity_market_test.jl")
+include("date_time_helper.jl")
+include("http_helper.jl")
+include("electricity_market.jl")
+include("miso_market.jl")
