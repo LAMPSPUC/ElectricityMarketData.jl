@@ -6,6 +6,7 @@ struct representing the Midcontinent Independent System Operator (MISO).
 
 Base.@kwdef struct MisoMarket <: ElectricityMarket
     url::String = "https://docs.misoenergy.org/"
+    directory::String = "MisoMarket"
     timezone::TimeZone = tz"UTC-5"
 end
 
@@ -50,7 +51,7 @@ function get_real_time_lmp_raw_data(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )::Nothing
-    directory = _mkdir(joinpath(folder, "MisoMarket"))
+    directory = _mkdir(joinpath(folder, market.directory))
     start = _zoned_date_time_to_yyyymmdd(start_date, market.timezone)
     stop = _zoned_date_time_to_yyyymmdd(end_date, market.timezone)
     urls = Vector{String}()
@@ -63,8 +64,6 @@ function get_real_time_lmp_raw_data(
        path = joinpath(directory, file)
        push!(urls, url)
        push!(paths, path)
-       @show urls
-       @show paths
     end
     tasks = _download_async(urls, paths)
     for task in tasks
