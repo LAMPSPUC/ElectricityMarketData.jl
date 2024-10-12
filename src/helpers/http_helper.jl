@@ -1,16 +1,16 @@
 """
-    _download(url::String, filename::String)::Nothing
+    _download(url::AbstractString, filename::AbstractString)::AbstractString
 
 Downloads the return of `url` if the file `filename` does not exist, and saves it in `filename`.
 """
-function _download(url::String, filename::String)::Nothing
+function _download(url::AbstractString, filename::AbstractString)::AbstractString
     if !isfile(filename)
         response = HTTP.get(url)
         open(filename, "w") do file
             write(file, response.body)
         end
     end
-    return nothing
+    return filename
 end
 
 """

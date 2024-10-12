@@ -39,18 +39,16 @@ function get_timezone(market::MisoMarket)::TimeZone
 end
 
 """
-    get_real_time_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    _async_get_real_time_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
-Parse the data using `parser` if provided.
 """
-function get_real_time_lmp_raw_data(
+function _async_get_real_time_lmp_raw_data(
     market::MisoMarket,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-    parser::Function = (args...) -> nothing,
-)::Nothing
+)::Vector{Task}
     directory = _mkdir(joinpath(folder, market.directory))
     start = _zoned_date_time_to_yyyymmdd(start_date, market.timezone)
     stop = _zoned_date_time_to_yyyymmdd(end_date, market.timezone)
@@ -65,7 +63,23 @@ function get_real_time_lmp_raw_data(
        push!(urls, url)
        push!(paths, path)
     end
-    tasks = _download_async(urls, paths)
+    return _download_async(urls, paths)
+end
+
+"""
+    get_real_time_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+
+Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
+Parse the data using `parser` if provided.
+"""
+function get_real_time_lmp_raw_data(
+    market::MisoMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)::Nothing
+    tasks = _async_get_real_time_lmp_raw_data(market, start_date, end_date; folder = folder)
     for task in tasks
         wait(task)
     end
@@ -86,5 +100,21 @@ function get_real_time_lmp(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )
-    throw(MethodError(get_real_time_lmp, (market, start_date, end_date)))
+    # TODO
+    dict = Dict{String, Vector{Float64}}()
+    tasks = _async_get_real_time_lmp_raw_data(market, start_date, end_date; folder = folder)
+    for task in tasks
+        file_name = fetch(task)
+        df = CSV.read(file_name, DataFrame)[4:end,:]
+        for row in eachrow(df)
+            if (row[3] != "LMP") continue end
+            vec = [parse(Float64, x) for x in values(row[4:27])]
+            if !haskey(dict, row[1])
+                dict[row[1]] = vec
+            else
+                append!(dict[row[1]], vec)
+            end
+        end
+    end
+    return dict
 end
