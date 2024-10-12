@@ -58,7 +58,7 @@ function _async_get_raw_data(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
 )::Vector{Task}
-    directory = _mkdir(joinpath(folder, market.directory))
+    directory = mkpath(joinpath(folder, market.directory))
     start = _zoned_date_time_to_yyyymmdd(start_date, market.timezone)
     stop = _zoned_date_time_to_yyyymmdd(end_date, market.timezone)
     tasks = Vector{Task}()
