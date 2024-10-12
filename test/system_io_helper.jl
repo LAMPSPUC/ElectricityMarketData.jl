@@ -3,9 +3,9 @@
         mktempdir() do tempdir
             dir = "test"
             path = joinpath(tempdir, dir)
-            @test _mkdir(path) == path
+            @test ElectricityMarketData._mkdir(path) == path
             @test isdir(path)
-            @test _mkdir(path) == path
+            @test ElectricityMarketData._mkdir(path) == path
         end
     end
 end
