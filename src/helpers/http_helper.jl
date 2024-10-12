@@ -4,7 +4,7 @@
 Downloads the return of `url` if the file `filename` does not exist, and saves it in `filename`.
 """
 function _download(url::String, filename::String)::Nothing
-    if !isfile(file_path)
+    if !isfile(filename)
         response = HTTP.get(url)
         open(filename, "w") do file
             write(file, response.body)
