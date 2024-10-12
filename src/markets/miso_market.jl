@@ -113,8 +113,6 @@ function get_real_time_lmp(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )
-    # TODO
-    dict = Dict{String,Vector{Float64}}()
     tasks = _async_get_raw_data(
         market,
         "marketreports",
@@ -123,20 +121,53 @@ function get_real_time_lmp(
         end_date;
         folder = folder,
     )
+    df = DataFrame(
+        Time = ZonedDateTime[],
+        Market = String[],
+        Node = String[],
+        Type = String[],
+        LMP = Float64[],
+        Energy = Float64[],
+        Congestion = Float64[],
+        Loss = Float64[],
+    )
     for task in tasks
         file_name = fetch(task)
-        df = CSV.read(file_name, DataFrame)[4:end, :]
-        for row in eachrow(df)
-            if (row[3] != "LMP")
-                continue
-            end
-            vec = [parse(Float64, x) for x in values(row[4:27])]
-            if !haskey(dict, row[1])
-                dict[row[1]] = vec
-            else
-                append!(dict[row[1]], vec)
+        csv = CSV.read(file_name, DataFrame)
+        # Gets the date from A2 (line 1 is empty)
+        date = ZonedDateTime(DateTime(csv[1, 1], "m/d/y"), market.timezone)
+        # Gets the matrix starting in A6 (line 1 and 3 are empty)
+        values = csv[4:end, :]
+        # Each node appears in 3 rows (lmp, congestion, loss)
+        number_of_nodes = Int(nrow(values) / 3)
+        # Loop over each hour
+        for i = 1:24
+            # Update the date
+            date = date + Hour(1)
+            # Loop over each node
+            for j = 1:number_of_nodes
+                # Gets the lmp, congestion and loss
+                lmp = parse(Float64, values[j, 3+i])
+                congestion = parse(Float64, values[j+number_of_nodes, 3+i])
+                loss = parse(Float64, values[j+2*number_of_nodes, 3+i])
+                # Gets the energy
+                energy = lmp - congestion - loss
+                # Push the data
+                push!(
+                    df,
+                    [
+                        date,
+                        "REAL_TIME_HOURLY",
+                        values[j, 1],
+                        values[j, 2],
+                        lmp,
+                        energy,
+                        congestion,
+                        loss,
+                    ],
+                )
             end
         end
     end
-    return dict
+    return df
 end

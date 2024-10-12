@@ -17,14 +17,14 @@
 
     @testset "get_real_time_lmp" begin
         mktempdir() do tempdir
-            market = ElectricityMarketData.MisoMarket()
-            # TODO
-            _ = get_real_time_lmp(
-                market,
+            df = get_real_time_lmp(
+                ElectricityMarketData.MisoMarket(),
                 DateTime("2024-01-01"),
                 DateTime("2024-01-02");
                 folder = tempdir,
             )
+            @test nrow(df) == 115872
+            @test ncol(df) == 8
         end
     end
 end
