@@ -39,12 +39,14 @@ function get_timezone(market::MisoMarket)::TimeZone
 end
 
 """
-    _async_get_real_time_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
+    _async_get_raw_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
-Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
+Download the 'file_base' raw data for the given `market` in the given 'url_folder' and `start_date` to `end_date` and save it in `folder`.
 """
-function _async_get_real_time_lmp_raw_data(
+function _async_get_raw_data(
     market::MisoMarket,
+    url_folder::AbstractString,
+    file_base::AbstractString,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
@@ -52,18 +54,15 @@ function _async_get_real_time_lmp_raw_data(
     directory = _mkdir(joinpath(folder, market.directory))
     start = _zoned_date_time_to_yyyymmdd(start_date, market.timezone)
     stop = _zoned_date_time_to_yyyymmdd(end_date, market.timezone)
-    urls = Vector{String}()
-    paths = Vector{String}()
-    base_url = joinpath(market.url, "marketreports")
-    base_file = "_rt_lmp_final.csv"
+    tasks = Vector{Task}()
+    base_url = joinpath(market.url, url_folder)
     for date in start:stop
-       file = string(date) * base_file
+       file = string(date) * file_base
        url = base_url * "/" * file
        path = joinpath(directory, file)
-       push!(urls, url)
-       push!(paths, path)
+       push!(tasks, _async_download(url, joinpath(url, path)))
     end
-    return _download_async(urls, paths)
+    return tasks
 end
 
 """
@@ -79,7 +78,7 @@ function get_real_time_lmp_raw_data(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )::Nothing
-    tasks = _async_get_real_time_lmp_raw_data(market, start_date, end_date; folder = folder)
+    tasks = _async_get_raw_data(market, "marketreports", "_rt_lmp_final.csv", start_date, end_date; folder = folder)
     for task in tasks
         wait(task)
     end
@@ -102,7 +101,7 @@ function get_real_time_lmp(
 )
     # TODO
     dict = Dict{String, Vector{Float64}}()
-    tasks = _async_get_real_time_lmp_raw_data(market, start_date, end_date; folder = folder)
+    tasks = _async_get_raw_data(market, "marketreports", "_rt_lmp_final.csv", start_date, end_date; folder = folder)
     for task in tasks
         file_name = fetch(task)
         df = CSV.read(file_name, DataFrame)[4:end,:]

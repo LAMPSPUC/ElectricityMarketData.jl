@@ -14,16 +14,10 @@ function _download(url::AbstractString, filename::AbstractString)::AbstractStrin
 end
 
 """
-    _download_async(urls::Vector{T}, filenames::Vector{T})::Vector{Task} where T<:AbstractString
+    _async_download(url::AbstractString, filename::AbstractString)::Task
 
-Downloads the 'urls' return set and saves it to 'filenames' asynchronously. Return the tasks.
+Downloads the 'url' and saves it to 'filename' asynchronously. Return the tasks.
 """
-function _download_async(urls::Vector{T}, filenames::Vector{T})::Vector{Task} where T <: AbstractString
-    @assert length(urls) == length(filenames)
-    tasks = Vector{Task}()
-    for (url, filename) in zip(urls, filenames)
-        task = @async _download(url, filename)
-        push!(tasks, task)
-    end
-    return tasks
+function _async_download(url::AbstractString, filename::AbstractString)::Task
+    return @async _download(url, filename)
 end
