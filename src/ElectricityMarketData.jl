@@ -16,6 +16,8 @@ export ElectricityMarket,
     available_time_series,
     get_real_time_lmp_raw_data,
     get_real_time_lmp,
+    get_day_ahead_lmp_raw_data,
+    get_day_ahead_lmp,
     get_timezone,
     ZonedDateTime
 
