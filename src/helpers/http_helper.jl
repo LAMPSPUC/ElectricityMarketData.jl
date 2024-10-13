@@ -18,7 +18,10 @@ end
 
 Downloads the 'urls' return set and saves it to 'filenames' asynchronously. Return the tasks.
 """
-function _download_async(urls::Vector{T}, filenames::Vector{T})::Vector{Task} where T <: AbstractString
+function _download_async(
+    urls::Vector{T},
+    filenames::Vector{T},
+)::Vector{Task} where {T<:AbstractString}
     @assert length(urls) == length(filenames)
     tasks = Vector{Task}()
     for (url, filename) in zip(urls, filenames)
