@@ -15,7 +15,10 @@
             temp_filename2 = joinpath(tempdir, "test2.csv")
             url1 = "https://docs.misoenergy.org/marketreports/20241007_rt_lmp_final.csv"
             url2 = "https://docs.misoenergy.org/marketreports/20241006_rt_lmp_final.csv"
-            tasks = ElectricityMarketData._download_async([url1, url2], [temp_filename1, temp_filename2])
+            tasks = ElectricityMarketData._download_async(
+                [url1, url2],
+                [temp_filename1, temp_filename2],
+            )
             @test length(tasks) == 2
             wait(tasks[1])
             @test isfile(temp_filename1)

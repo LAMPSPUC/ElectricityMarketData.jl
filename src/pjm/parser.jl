@@ -1,63 +1,3 @@
-const DayAheadHourlyLMP_values_keys = [
-    "system_energy_price_da",
-    "total_lmp_da",
-    "congestion_price_da",
-    "marginal_loss_price_da",
-]
-
-const DayAheadHourlyLMP_meta_keys = [
-    "pnode_name",
-    "voltage",
-    "equipment",
-    "type",
-    "zone",
-    "row_is_current",
-    "version_nbr",
-]
-
-struct DayAheadHourlyLMP <: ElectricityMarket
-    Meta::DataFrame
-    SystemEnergyPricesAhead::DataFrame
-    TotalLMPDayAhead::DataFrame
-    CongestionPriceDayAhead::DataFrame
-    MarginalLossPriceDayAhead::DataFrame
-
-    function DayAheadHourlyLMP(start_date::String, start_hour_minute, end_date::String, end_hour_minute::String)
-        df = get_day_ahead_hourly_lmp(start_date, start_hour_minute, end_date, end_hour_minute)
-        df_dict, meta_df = parse_df_format(df, DayAheadHourlyLMP_values_keys, DayAheadHourlyLMP_meta_keys)
-        return new(
-            meta_df,
-            df_dict["system_energy_price_da"],
-            df_dict["total_lmp_da"],
-            df_dict["congestion_price_da"],
-            df_dict["marginal_loss_price_da"],
-        )
-    end
-end
-
-"""
-    get_day_ahead_hourly_lmp(start_date::String, end_date::String)::DataFrame
-
-Get the dataframe for the day ahead hourly lmp data from the PJM API between `start_date` and `end_date`.
-
-# Arguments
-- start_date::String: The start date of the data to be retrieved (format: "m/d/y").
-- end_date::String: The end date of the data to be retrieved (format: "m/d/y").
-- start_hour_minute::String: The start hour and minute of the data to be retrieved (format: "HH:MM").
-- end_hour_minute::String: The end hour and minute of the data to be retrieved (format: "HH:MM").
-
-# Returns
-- DataFrame: The dataframe for the day ahead hourly lmp data from the PJM API between `start_date` and `end_date`.
-"""
-function get_day_ahead_hourly_lmp(start_date::String, start_hour_minute, end_date::String, end_hour_minute)::DataFrame
-    access_key_dict = get_acess_key_headers()
-    url = get_url_day_ahead_hourly_lmp(start_date, start_hour_minute, end_date, end_hour_minute)
-    response = HTTP.get(url, headers=access_key_dict)
-
-    return CSV.read(IOBuffer(response.body), DataFrame)
-
-end
-
 """
  parse_df_format(df::DataFrame, value_keys::Vector{String}, meta_keys::Vector{String})::Tuple{Dict, DataFrame}
 
@@ -71,13 +11,17 @@ parse the DataFrame into a Dict of DataFrames for each value key and a DataFrame
 # Returns
 - Tuple{Dict, DataFrame}: A Tuple containing the Dict of DataFrames for each value key and a DataFrame for the meta keys.
 """
-function parse_df_format(df::DataFrame, value_keys::Vector{String}, meta_keys::Vector{String})::Tuple{Dict, DataFrame}
+function parse_df_format(
+    df::DataFrame,
+    value_keys::Vector{String},
+    meta_keys::Vector{String},
+)::Tuple{Dict,DataFrame}
 
     df.datetime_beginning_utc = DateTime.(df.datetime_beginning_utc, "m/d/y H:M:S p")
     df.datetime_beginning_ept = DateTime.(df.datetime_beginning_ept, "m/d/y H:M:S p")
 
-    df_dict   = get_group_df(df, value_keys)
-    meta_df   = get_meta_dict(df, meta_keys)
+    df_dict = get_group_df(df, value_keys)
+    meta_df = get_meta_dict(df, meta_keys)
 
     return df_dict, meta_df
 end
@@ -94,13 +38,16 @@ Group the DataFrame by pnode_id and return a Dict of DataFrames for each value k
 # Returns
 - Dict{String, DataFrame}: A Dict of DataFrames for each value key.
 """
-function get_group_df(df::DataFrame, value_keys::Vector{String})::Dict{String, DataFrame}
+function get_group_df(df::DataFrame, value_keys::Vector{String})::Dict{String,DataFrame}
     unique_dates_utc = unique(df.datetime_beginning_utc)
     unique_dates_ept = unique(df.datetime_beginning_ept)
 
-    df_dict = Dict{String, DataFrame}()
-    for key in value_keys 
-        key_df = DataFrame("datetime_beginning_utc" => unique_dates_utc, "datetime_beginning_ept" => unique_dates_ept)
+    df_dict = Dict{String,DataFrame}()
+    for key in value_keys
+        key_df = DataFrame(
+            "datetime_beginning_utc" => unique_dates_utc,
+            "datetime_beginning_ept" => unique_dates_ept,
+        )
 
         grouped_df = groupby(df, :pnode_id)
 
@@ -128,7 +75,7 @@ Get the meta DataFrame from the DataFrame.
 - DataFrame: The meta DataFrame.
 """
 function get_meta_dict(df::DataFrame, meta_keys::Vector{String})::DataFrame
-    
+
     unique_pnode_id = unique(df.pnode_id)
 
     meta_df = DataFrame(pnode_id = unique_pnode_id)
@@ -139,7 +86,7 @@ function get_meta_dict(df::DataFrame, meta_keys::Vector{String})::DataFrame
     # Iterate over the unique keys to populate meta_df
     for key in meta_keys
         # Create a column for each key
-        meta_df[!, key] =  Vector{Any}(undef, nrow(meta_df))
+        meta_df[!, key] = Vector{Any}(undef, nrow(meta_df))
 
         # Populate the column values using the grouped data
         for (index, group) in enumerate(grouped_df)

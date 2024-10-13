@@ -25,5 +25,7 @@ include("markets/electricity_market.jl")
 include("pjm/urls.jl")
 include("pjm/utils.jl")
 include("pjm/parser.jl")
+include("pjm/download.jl")
+include("pjm/structs.jl")
 
 end # module
