@@ -29,9 +29,17 @@ function available_time_series(::MisoMarket)::Vector{NamedTuple}
             name = "RT-LMP",
             unit = "\$/MWh",
             resolution = Hour(1),
-            first_date = DateTime("2021-01-01T00:00:00"),
+            first_date = DateTime("2005-05-01T00:00:00"),
             method = get_real_time_lmp,
             description = "Real-time Locational Marginal Price data",
+        ),
+        (
+            name = "DA-LMP",
+            unit = "\$/MWh",
+            resolution = Hour(1),
+            first_date = DateTime("2005-05-01T00:00:00"),
+            method = get_day_ahead_lmp,
+            description = "Day-ahead Locational Marginal Price data",
         ),
     ]
 end
@@ -117,6 +125,36 @@ function _async_get_raw_data(
 end
 
 """
+    _get_raw_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+
+Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
+"""
+function _get_raw_data(
+    market::MisoMarket,
+    url_folder::AbstractString,
+    file_base::AbstractString,
+    extension::AbstractString,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)::Nothing
+    tasks = _async_get_raw_data(
+        market,
+        url_folder,
+        file_base,
+        extension,
+        start_date,
+        end_date;
+        folder = folder,
+    )
+    for task in tasks
+        wait(task)
+    end
+    return nothing
+end
+
+"""
     get_real_time_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
 
 Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
@@ -129,7 +167,7 @@ function get_real_time_lmp_raw_data(
     folder::AbstractString = tempdir(),
     parser::Function = (args...) -> nothing,
 )::Nothing
-    tasks = _async_get_raw_data(
+    _get_raw_data(
         market,
         "marketreports",
         "_rt_lmp_final",
@@ -138,21 +176,47 @@ function get_real_time_lmp_raw_data(
         end_date;
         folder = folder,
     )
-    for task in tasks
-        wait(task)
-    end
     return nothing
 end
 
 """
-    get_real_time_lmp(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
+    get_day_ahead_lmp_raw_data(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+
+Download raw data for Day-Ahead (DA) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
+Parse the data using `parser` if provided.
+"""
+function get_day_ahead_lmp_raw_data(
+    market::MisoMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)::Nothing
+    _get_raw_data(
+        market,
+        "marketreports",
+        "_da_expost_lmp",
+        "csv",
+        start_date,
+        end_date;
+        folder = folder,
+    )
+    return nothing
+end
+
+"""
+    _get_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, type::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
 
 Return a table with Real-Time (RT) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
 Parse the data using `parser` if provided.
 If the data is not available, download it and save it in `folder`. 
 """
-function get_real_time_lmp(
+function _get_data(
     market::MisoMarket,
+    url_folder::AbstractString,
+    file_base::AbstractString,
+    extension::AbstractString,
+    type::AbstractString,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
@@ -160,9 +224,9 @@ function get_real_time_lmp(
 )
     tasks = _async_get_raw_data(
         market,
-        "marketreports",
-        "_rt_lmp_final",
-        "csv",
+        url_folder,
+        file_base,
+        extension,
         start_date,
         end_date;
         folder = folder,
@@ -205,19 +269,62 @@ function get_real_time_lmp(
                 # Push the data
                 push!(
                     df,
-                    [
-                        date,
-                        "REAL_TIME_HOURLY",
-                        values[j, 1],
-                        values[j, 2],
-                        lmp,
-                        energy,
-                        congestion,
-                        loss,
-                    ],
+                    [date, type, values[j, 1], values[j, 2], lmp, energy, congestion, loss],
                 )
             end
         end
     end
     return df
+end
+
+"""
+    get_real_time_lmp(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
+
+Return a table with Real-Time (RT) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
+Parse the data using `parser` if provided.
+If the data is not available, download it and save it in `folder`. 
+"""
+function get_real_time_lmp(
+    market::MisoMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)
+    return _get_data(
+        market,
+        "marketreports",
+        "_rt_lmp_final",
+        "csv",
+        "REAL_TIME_HOURLY",
+        start_date,
+        end_date;
+        folder = folder,
+    )
+end
+
+"""
+    get_day_ahead_lmp(market::MisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
+
+Return a table with Day-Ahead (DA) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
+Parse the data using `parser` if provided.
+If the data is not available, download it and save it in `folder`. 
+"""
+function get_day_ahead_lmp(
+    market::MisoMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)
+    return _get_data(
+        market,
+        "marketreports",
+        "_da_expost_lmp",
+        "csv",
+        "DAY_AHEAD_HOURLY",
+        start_date,
+        end_date;
+        folder = folder,
+    )
 end
