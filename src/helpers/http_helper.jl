@@ -7,9 +7,12 @@ function _download(
     url::AbstractString,
     filename::AbstractString,
     headers::Dict = Dict(),
-)::Nothing
+)::AbstractString
     if !isfile(filename)
-        response = HTTP.get(url, headers = headers)
+        response = HTTP.get(url; status_exception = false, headers = headers)
+        if response.status != 200
+            return ""
+        end
         open(filename, "w") do file
             write(file, response.body)
         end
