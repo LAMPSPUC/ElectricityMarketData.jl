@@ -12,7 +12,7 @@ abstract type ElectricityMarket end
 Return a vector of all available electricity markets.
 """
 function list_markets()::Vector{Symbol}
-    return Vector{Symbol}()
+    return [:MisoMarket]
 end
 
 """
@@ -110,6 +110,73 @@ function get_real_time_lmp(
 )
     @warn "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_real_time_lmp(
+        market,
+        ZonedDateTime(start_date, get_timezone(market)),
+        ZonedDateTime(end_date, get_timezone(market));
+        folder = folder,
+        parser = parser,
+    )
+end
+
+"""
+    get_day_ahead_lmp_raw_data(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+
+Download raw data for Day-Ahead (DA) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
+Parse the data using `parser` if provided.
+"""
+function get_day_ahead_lmp_raw_data(
+    market::ElectricityMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)::Nothing
+    throw(MethodError(get_day_ahead_lmp_raw_data, (market, start_date, end_date)))
+end
+
+function get_day_ahead_lmp_raw_data(
+    market::ElectricityMarket,
+    start_date::DateTime,
+    end_date::DateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)::Nothing
+    @warn "Converting DateTime to ZonedDateTime using the timezone of $(market)"
+    get_day_ahead_lmp_raw_data(
+        market,
+        ZonedDateTime(start_date, get_timezone(market)),
+        ZonedDateTime(end_date, get_timezone(market));
+        folder = folder,
+        parser = parser,
+    )
+end
+
+"""
+    get_day_ahead_lmp(market::ElectricityMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
+
+Return a table with Day-Ahead (DA) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
+Parse the data using `parser` if provided.
+If the data is not available, download it and save it in `folder`. 
+"""
+function get_day_ahead_lmp(
+    market::ElectricityMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)
+    throw(MethodError(get_day_ahead_lmp, (market, start_date, end_date)))
+end
+
+function get_day_ahead_lmp(
+    market::ElectricityMarket,
+    start_date::DateTime,
+    end_date::DateTime;
+    folder::AbstractString = tempdir(),
+    parser::Function = (args...) -> nothing,
+)
+    @warn "Converting DateTime to ZonedDateTime using the timezone of $(market)"
+    get_day_ahead_lmp(
         market,
         ZonedDateTime(start_date, get_timezone(market)),
         ZonedDateTime(end_date, get_timezone(market));
