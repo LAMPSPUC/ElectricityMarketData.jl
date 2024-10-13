@@ -12,7 +12,7 @@ abstract type ElectricityMarket end
 Return a vector of all available electricity markets.
 """
 function list_markets()::Vector{Symbol}
-    return Vector{Symbol}()
+    return [:MisoMarket]
 end
 
 """

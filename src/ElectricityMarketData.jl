@@ -5,6 +5,9 @@ using TimeZones
 using Logging
 using Tables
 using HTTP
+using CSV
+using DataFrames
+using ZipFile
 
 import TimeZones: ZonedDateTime
 
@@ -20,5 +23,6 @@ export ElectricityMarket,
 
 include("helpers/http_helper.jl")
 include("markets/electricity_market.jl")
+include("markets/miso_market.jl")
 
 end # module
