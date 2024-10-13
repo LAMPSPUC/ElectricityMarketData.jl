@@ -49,20 +49,15 @@ function _async_download(
         # If the file is not downloaded, it was archived, we will use the zipped version
         _ = _download(url_zip, filename_zip)
         zip = ZipFile.Reader(filename_zip)
-        for filename in filenames
-            base_file = basename(filename)
-            for file in zip.files
-                if file.name == base_file
-                    task = @async begin
-                        open(filename, "w") do temp
-                            write(temp, read(file))
-                        end
-                        return filename
-                    end
-                    push!(tasks, task)
-                    break
-                end
+        for file in zip.files
+            open(joinpath(dirname(filename_zip), file.name), "w") do temp
+                write(temp, read(file))
             end
+        end
+        close(zip)
+        for filename in filenames
+            task = @async return filename
+            push!(tasks, task)
         end
     end
     return tasks
