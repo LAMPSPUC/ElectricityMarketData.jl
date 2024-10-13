@@ -7,6 +7,7 @@ using Tables
 using HTTP
 using CSV
 using DataFrames
+using ZipFile
 
 import TimeZones: ZonedDateTime
 
@@ -18,7 +19,6 @@ export ElectricityMarket,
     get_timezone,
     ZonedDateTime
 
-include("helpers/date_time_helper.jl")
 include("helpers/http_helper.jl")
 include("markets/electricity_market.jl")
 include("markets/miso_market.jl")

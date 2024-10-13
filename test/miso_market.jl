@@ -26,5 +26,15 @@
             @test nrow(df) == 115872
             @test ncol(df) == 8
         end
+        mktempdir() do tempdir
+            df = get_real_time_lmp(
+                ElectricityMarketData.MisoMarket(),
+                DateTime("2021-12-31"),
+                DateTime("2022-01-01");
+                folder = tempdir,
+            )
+            @test nrow(df) == 110736
+            @test ncol(df) == 8
+        end
     end
 end
