@@ -1,3 +1,13 @@
+const PJMDayAheadHourlyLMP_values_keys = [
+    "system_energy_price_da",
+    "total_lmp_da",
+    "congestion_price_da",
+    "marginal_loss_price_da",
+]
+
+const PJMDayAheadHourlyLMP_meta_keys =
+    ["pnode_name", "voltage", "equipment", "type", "zone", "row_is_current", "version_nbr"]
+
 """
  parse_df_format(df::DataFrame, value_keys::Vector{String}, meta_keys::Vector{String})::Tuple{Dict, DataFrame}
 
@@ -15,15 +25,15 @@ function parse_df_format(
     df::DataFrame,
     value_keys::Vector{String},
     meta_keys::Vector{String},
-)::Tuple{Dict,DataFrame}
+)::Dict
 
     df.datetime_beginning_utc = DateTime.(df.datetime_beginning_utc, "m/d/y H:M:S p")
     df.datetime_beginning_ept = DateTime.(df.datetime_beginning_ept, "m/d/y H:M:S p")
 
     df_dict = get_group_df(df, value_keys)
-    meta_df = get_meta_dict(df, meta_keys)
+    df_dict["meta"] = get_meta_df(df, meta_keys)
 
-    return df_dict, meta_df
+    return df_dict
 end
 
 """
@@ -74,7 +84,7 @@ Get the meta DataFrame from the DataFrame.
 # Returns
 - DataFrame: The meta DataFrame.
 """
-function get_meta_dict(df::DataFrame, meta_keys::Vector{String})::DataFrame
+function get_meta_df(df::DataFrame, meta_keys::Vector{String})::DataFrame
 
     unique_pnode_id = unique(df.pnode_id)
 

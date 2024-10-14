@@ -14,11 +14,10 @@ Get the url for the day ahead hourly lmp data from the PJM API.
 """
 function get_url_day_ahead_hourly_lmp(
     start_date::String,
-    start_hour_minute,
+    start_hour_minute::String,
     end_date::String,
-    end_hour_minute,
+    end_hour_minute::String,
 )::AbstractString
 
-    return "https://api.pjm.com/api/v1/da_hrl_lmps?sort=datetime_beginning_ept&order=Asc&startRow=1&isActiveMetadata=true&fields=congestion_price_da,datetime_beginning_ept,datetime_beginning_utc,equipment,marginal_loss_price_da,pnode_id,pnode_name,row_is_current,system_energy_price_da,total_lmp_da,type,version_nbr,voltage,zone&datetime_beginning_ept=$start_date%20$(start_hour_minute)to$end_date%20$(end_hour_minute)&format=csv&download=true"
-
+    return "https://api.pjm.com/api/v1/da_hrl_lmps?startRow=1&isActiveMetadata=true&datetime_beginning_ept=$start_date%20$(start_hour_minute)to$end_date%20$(end_hour_minute)&format=csv&download=true"
 end
