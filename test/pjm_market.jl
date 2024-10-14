@@ -22,12 +22,5 @@
             ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4"),
         )
         @test typeof(df_raw) == DataFrame
-        parsed_dict = ElectricityMarketData.get_day_ahead_hourly_lmp(
-            market,
-            ZonedDateTime(DateTime(2024, 1, 1, 0, 0), tz"UTC-4"),
-            ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4");
-            parser = true,
-        )
-        @test typeof(parsed_dict) == Dict{String,DataFrame}
     end
 end

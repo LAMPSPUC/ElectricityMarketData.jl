@@ -9,6 +9,15 @@ Example of getting DayAheadPJM
 
 ```julia 
 using ElectricityMarketData
-dayaheadlmpPJM = ElectricityMarketData.DayAheadLmpPJM("10/2/2024", "00:15", "10/3/2024", "00:15")
-parsed_dayaheadlmpPJM = ElectricityMarketData.ParsedDayAheadLmpPJM(dayaheadlmpPJM)
+market = ElectricityMarketData.PjmMarket()
+df_raw = ElectricityMarketData.get_day_ahead_hourly_lmp(
+    market,
+    ZonedDateTime(DateTime(2024, 1, 1, 0, 0), tz"UTC-4"),
+    ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4"),
+)
+parsed_data = ElectricityMarketData.parse_df_format(
+            df,
+            ElectricityMarketData.PJMDayAheadHourlyLMP_values_keys,
+            ElectricityMarketData.PJMDayAheadHourlyLMP_meta_keys,
+        )
 ```

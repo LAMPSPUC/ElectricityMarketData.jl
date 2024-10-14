@@ -86,8 +86,7 @@ Parse the data using `parser` if required.
 function get_day_ahead_hourly_lmp(
     market::PjmMarket,
     start_date::ZonedDateTime,
-    end_date::ZonedDateTime;
-    parser::Bool = false,
+    end_date::ZonedDateTime,
 )
     # assert that the difference between the start and end date is less than 366 days
     @assert Dates.value((end_date - start_date)) / 86400000 < 366 "Currently, we only support downloading data for less than 366 days."
@@ -104,14 +103,5 @@ function get_day_ahead_hourly_lmp(
 
     response = HTTP.get(url, headers = access_key_dict)
 
-    df = CSV.read(IOBuffer(response.body), DataFrame)
-    if parser
-        return parse_df_format(
-            df,
-            PJMDayAheadHourlyLMP_values_keys,
-            PJMDayAheadHourlyLMP_meta_keys,
-        )
-    else
-        return df
-    end
+    return CSV.read(IOBuffer(response.body), DataFrame)
 end
