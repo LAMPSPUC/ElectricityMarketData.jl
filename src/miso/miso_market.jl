@@ -62,6 +62,7 @@ function get_real_time_lmp_raw_data(
     market::MisoMarket,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
 )::Nothing
     _get_raw_data(
         market,
