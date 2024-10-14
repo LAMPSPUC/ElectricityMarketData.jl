@@ -19,7 +19,7 @@ using Dates
 using TimeZones
 import TimeZones: ZonedDateTime
 market = ElectricityMarketData.PjmMarket()
-df_raw = ElectricityMarketData.get_day_ahead_hourly_lmp(
+df_raw = ElectricityMarketData.get_day_ahead_lmp(
     market,
     ZonedDateTime(DateTime(2024, 1, 1, 0, 0), tz"UTC-4"),
     ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4"),

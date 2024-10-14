@@ -45,11 +45,11 @@ function get_timezone(market::PjmMarket)::TimeZone
 end
 
 """
-    get_day_ahead_hourly_lmp_raw_data(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    get_day_ahead_lmp_raw_data(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Download raw data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
 """
-function get_day_ahead_hourly_lmp_raw_data(
+function get_day_ahead_lmp_raw_data(
     market::PjmMarket,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
@@ -63,7 +63,7 @@ function get_day_ahead_hourly_lmp_raw_data(
 
     start_date_str, start_hour_minute, end_date_str, end_hour_minute =
         get_str_dates(start_date, end_date, market)
-    url = get_url_day_ahead_hourly_lmp(
+    url = get_url_day_ahead_lmp(
         start_date_str,
         start_hour_minute,
         end_date_str,
@@ -71,19 +71,18 @@ function get_day_ahead_hourly_lmp_raw_data(
     )
     access_key_dict = get_acess_key_headers()
 
-    file_path = joinpath(directory, "day_ahead_hourly_lmp.csv")
+    file_path = joinpath(directory, "day_ahead_lmp.csv")
     _download(url, file_path, access_key_dict)
     return nothing
 end
 
 
 """
-    get_day_ahead_hourly_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    get_day_ahead_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Return a table with data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
-Parse the data using `parser` if required.
 """
-function get_day_ahead_hourly_lmp(
+function get_day_ahead_lmp(
     market::PjmMarket,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
@@ -93,7 +92,7 @@ function get_day_ahead_hourly_lmp(
 
     start_date_str, start_hour_minute, end_date_str, end_hour_minute =
         get_str_dates(start_date, end_date, market)
-    url = get_url_day_ahead_hourly_lmp(
+    url = get_url_day_ahead_lmp(
         start_date_str,
         start_hour_minute,
         end_date_str,
