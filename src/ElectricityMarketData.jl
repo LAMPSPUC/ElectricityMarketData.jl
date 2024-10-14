@@ -20,8 +20,6 @@ export ElectricityMarket,
     get_real_time_lmp,
     get_day_ahead_lmp_raw_data,
     get_day_ahead_lmp,
-    get_day_ahead_hourly_lmp_raw_data,
-    get_day_ahead_hourly_lmp,
     get_timezone,
     ZonedDateTime
 

@@ -1,5 +1,5 @@
 """
-    get_url_day_ahead_hourly_lmp(start_date::String, end_date::String)::AbstractString
+    get_url_day_ahead_lmp(start_date::String, end_date::String)::AbstractString
 
 Get the url for the day ahead hourly lmp data from the PJM API.
 
@@ -12,7 +12,7 @@ Get the url for the day ahead hourly lmp data from the PJM API.
 # Returns
 - AbstractString: The url for the day ahead hourly lmp data from the PJM API.
 """
-function get_url_day_ahead_hourly_lmp(
+function get_url_day_ahead_lmp(
     start_date::String,
     start_hour_minute::String,
     end_date::String,
