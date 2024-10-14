@@ -4,7 +4,7 @@
     start_hour_minute = "00:00"
     end_date = "10/2/2024"
     end_hour_minute = "01:00"
-    url = ElectricityMarketData.get_url_day_ahead_hourly_lmp(
+    url = ElectricityMarketData.get_url_day_ahead_lmp(
         start_date,
         start_hour_minute,
         end_date,
