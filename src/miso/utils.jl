@@ -70,7 +70,7 @@ function _async_get_raw_data(
 end
 
 """
-    _get_raw_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    _get_raw_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Download raw data for Real-Time (RT) Locational Marginal Price (LMP) for the given `market` and `start_date` to `end_date` and save it in `folder`.
 """
@@ -82,7 +82,6 @@ function _get_raw_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-    parser::Function = (args...) -> nothing,
 )::Nothing
     tasks = _async_get_raw_data(
         market,
@@ -100,10 +99,9 @@ function _get_raw_data(
 end
 
 """
-    _get_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, type::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing) :: Tables.table
+    _get_data(market::MisoMarket, url_folder::AbstractString, file_base::AbstractString, extension::AbstractString, type::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir()) :: Tables.table
 
 Return a table with Real-Time (RT) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`.
-Parse the data using `parser` if provided.
 If the data is not available, download it and save it in `folder`. 
 """
 function _get_data(
@@ -115,7 +113,6 @@ function _get_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-    parser::Function = (args...) -> nothing,
 )
     tasks = _async_get_raw_data(
         market,

@@ -45,7 +45,7 @@ function get_timezone(market::PjmMarket)::TimeZone
 end
 
 """
-    get_day_ahead_lmp_raw_data(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    get_day_ahead_lmp_raw_data(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Download raw data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
 """
@@ -78,10 +78,9 @@ end
 
 
 """
-    get_day_ahead_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir(), parser::Function=(args...) -> nothing)
+    get_day_ahead_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
 
 Return a table with data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
-Parse the data using `parser` if required.
 """
 function get_day_ahead_lmp(
     market::PjmMarket,
