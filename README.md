@@ -5,15 +5,11 @@
 [![Build Status](https://github.com/LAMPSPUC/ElectricityMarketData.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/LAMPSPUC/ElectricityMarketData.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/LAMPSPUC/ElectricityMarketData.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/LAMPSPUC/ElectricityMarketData.jl)
 
-+---------------+-----+------+-------+
-| Data          | PJM | MISO | CAISO |
-+---------------+-----+------+-------+
-| Real Time LMP | ❌   | ✔️   | ❌     |
-+---------------+-----+------+-------+
-| Day-ahead LMP | ✔️  | ✔️   | ❌     |
-+---------------+-----+------+-------+
-| Load          | ❌   | ❌    | ❌     |
-+---------------+-----+------+-------+
+|     Data      |  PJM  | MISO  | CAISO |
+| ------------- | :---: | :---: | :---: |
+| Real Time LMP |  ❌  |  ✔️   |   ❌   |
+| Day-ahead LMP |  ✔️  |  ✔️   |   ❌   |
+| Load          |  ❌  |   ❌   |   ❌   |
 
 Example of getting data from PJM
 
