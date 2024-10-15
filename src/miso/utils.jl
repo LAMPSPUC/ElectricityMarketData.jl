@@ -135,13 +135,21 @@ function _get_data(
     )
     for task in tasks
         file_name = fetch(task)
-        csv = CSV.read(file_name, DataFrame)
-        # Gets the date from A2 (line 1 is empty)
-        date = ZonedDateTime(DateTime(csv[1, 1], "m/d/y"), market.timezone)
-        # Gets the matrix starting in A6 (line 1 and 3 are empty)
-        values = csv[4:end, :]
+        # Uses regex to recovery the date from the nome of the file
+        date = ZonedDateTime(
+            DateTime(match(r"\d{8}", file_name).match, "yyyymmdd"),
+            market.timezone,
+        )
+        # The true data starts in the line 6. There are some bad formats in the previous lines, so no warnings
+        data = CSV.read(
+            file_name,
+            DataFrame;
+            skipto = 6,
+            silencewarnings = true,
+            strict = true,
+        )
         # Each node appears in 3 rows (lmp, congestion, loss)
-        number_of_nodes = Int(nrow(values) / 3)
+        number_of_nodes = Int(nrow(data) / 3)
         # Loop over each hour
         for i = 1:24
             # Update the date
@@ -149,19 +157,19 @@ function _get_data(
             # Loop over each node
             for j = 1:number_of_nodes
                 # Check that the nodes have the same order
-                @assert values[j, 1] ==
-                        values[j+number_of_nodes, 1] ==
-                        values[j+2*number_of_nodes, 1]
+                @assert data[j, 1] ==
+                        data[j+number_of_nodes, 1] ==
+                        data[j+2*number_of_nodes, 1]
                 # Gets the lmp, congestion and loss
-                lmp = parse(Float64, values[j, 3+i])
-                congestion = parse(Float64, values[j+number_of_nodes, 3+i])
-                loss = parse(Float64, values[j+2*number_of_nodes, 3+i])
+                lmp = data[j, 3+i]
+                congestion = data[j+number_of_nodes, 3+i]
+                loss = data[j+2*number_of_nodes, 3+i]
                 # Gets the energy
                 energy = lmp - congestion - loss
                 # Push the data
                 push!(
                     df,
-                    [date, type, values[j, 1], values[j, 2], lmp, energy, congestion, loss],
+                    [date, type, data[j, 1], data[j, 2], lmp, energy, congestion, loss],
                 )
             end
         end
