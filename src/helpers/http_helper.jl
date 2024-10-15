@@ -3,9 +3,13 @@
 
 Downloads the return of `url` if the file `filename` does not exist, and saves it in `filename`.
 """
-function _download(url::AbstractString, filename::AbstractString)::AbstractString
+function _download(
+    url::AbstractString,
+    filename::AbstractString,
+    headers::Dict = Dict(),
+)::AbstractString
     if !isfile(filename)
-        response = HTTP.get(url; status_exception = false)
+        response = HTTP.get(url; status_exception = false, headers = headers)
         if response.status != 200
             return ""
         end
