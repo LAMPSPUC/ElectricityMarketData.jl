@@ -19,6 +19,7 @@ DataFrames = "1"
 HTTP = "1"
 Tables = "1"
 TimeZones = "1"
+ZipFile = "0.10"
 julia = "1.6.7"
 
 [extras]
