@@ -29,8 +29,16 @@ function available_time_series(::PjmMarket)::Vector{NamedTuple}
             unit = "\$/MWh",
             resolution = Hour(1),
             first_date = DateTime("2000-06-01T00:00:00"),
-            method = get_day_ahead_lmp_pjm,
             description = "Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations",
+            url_function = get_url_day_ahead_lmp,
+        ),
+        (
+            name = "RT-LMP",
+            unit = "\$/MWh",
+            resolution = Hour(1),
+            first_date = DateTime("1998-04-01T00:00:00"),
+            description = "Real Time Energy Market locational marginal pricing (LMP) data for all bus locations",
+            url_function = get_url_real_time_lmp,
         ),
     ]
 end
@@ -49,58 +57,46 @@ end
 
 Download raw data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
 """
-function get_day_ahead_lmp_raw_data(
+function get_pjm_lmp_raw_data(
     market::PjmMarket,
+    series_name::String,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-)::Nothing
+    download::Bool = true,
+)
+
+    url_function = get_url_function(market, series_name)
 
     # assert that the difference between the start and end date is less than 366 days
     @assert Dates.value((end_date - start_date)) / 86400000 < 366 "Currently, we only support downloading data for less than 366 days."
 
     directory = mkpath(joinpath(folder, market.directory))
 
-    start_date_str, start_hour_minute, end_date_str, end_hour_minute =
-        get_str_dates(start_date, end_date, market)
-    url = get_url_day_ahead_lmp(
-        start_date_str,
-        start_hour_minute,
-        end_date_str,
-        end_hour_minute,
-    )
     access_key_dict = get_acess_key_headers()
 
-    file_path = joinpath(directory, "day_ahead_lmp.csv")
-    _download(url, file_path, access_key_dict)
-    return nothing
-end
-
-
-"""
-    get_day_ahead_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir())
-
-Return a table with data for Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations `market` and `start_date` to `end_date` and save it in `folder`.
-"""
-function get_day_ahead_lmp(
-    market::PjmMarket,
-    start_date::ZonedDateTime,
-    end_date::ZonedDateTime,
-)
-    # assert that the difference between the start and end date is less than 366 days
-    @assert Dates.value((end_date - start_date)) / 86400000 < 366 "Currently, we only support downloading data for less than 366 days."
-
-    start_date_str, start_hour_minute, end_date_str, end_hour_minute =
-        get_str_dates(start_date, end_date, market)
-    url = get_url_day_ahead_lmp(
-        start_date_str,
-        start_hour_minute,
-        end_date_str,
-        end_hour_minute,
+    tasks = _get_raw_data(
+        market,
+        start_date,
+        end_date,
+        directory,
+        access_key_dict,
+        url_function,
+        series_name,
+        download,
     )
-    access_key_dict = get_acess_key_headers()
 
-    response = HTTP.get(url, headers = access_key_dict)
+    if download
+        return nothing
+    else
+        df = DataFrame()
+        for task in tasks
+            df = vcat(df, fetch(task))
+        end
+        #sort df by datetime column "datetime_beginning_utc"
+        sort!(df, :datetime_beginning_utc)
+        return df
 
-    return CSV.read(IOBuffer(response.body), DataFrame)
+    end
+    
 end
