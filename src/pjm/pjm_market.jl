@@ -28,6 +28,7 @@ function available_time_series(::PjmMarket)::Vector{NamedTuple}
             name = "DA-LMP",
             unit = "\$/MWh",
             resolution = Hour(1),
+            method = get_day_ahead_lmp,
             first_date = DateTime("2000-06-01T00:00:00"),
             description = "Day-Ahead Energy Market locational marginal pricing (LMP) data for all bus locations",
             url_function = get_url_day_ahead_lmp,
@@ -36,6 +37,7 @@ function available_time_series(::PjmMarket)::Vector{NamedTuple}
             name = "RT-LMP",
             unit = "\$/MWh",
             resolution = Hour(1),
+            method = get_real_time_lmp,
             first_date = DateTime("1998-04-01T00:00:00"),
             description = "Real Time Energy Market locational marginal pricing (LMP) data for all bus locations",
             url_function = get_url_real_time_lmp,
@@ -99,4 +101,49 @@ function get_pjm_lmp_raw_data(
 
     end
 
+end
+
+"""
+    get_real_time_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir()) :: Tables.table
+
+Return a table with Real-Time (RT) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`, download is chosen, save it in `folder` instead.
+"""
+function get_real_time_lmp(
+    market::PjmMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    download::Bool = false,
+)
+    return get_pjm_lmp_raw_data(
+        market,
+        "RT-LMP",
+        start_date,
+        end_date;
+        folder = folder,
+        download = download,
+    )
+end
+
+"""
+    get_day_ahead_lmp(market::PjmMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir()) :: Tables.table
+
+Return a table with Day-Ahead (DA) Locational Marginal Price (LMP) data for the given `market` and `start_date` to `end_date`, download is chosen, save it in `folder` instead.
+
+"""
+function get_day_ahead_lmp(
+    market::PjmMarket,
+    start_date::ZonedDateTime,
+    end_date::ZonedDateTime;
+    folder::AbstractString = tempdir(),
+    download::Bool = false,
+)
+    return get_pjm_lmp_raw_data(
+        market,
+        "DA-LMP",
+        start_date,
+        end_date;
+        folder = folder,
+        download = download,
+    )
 end
