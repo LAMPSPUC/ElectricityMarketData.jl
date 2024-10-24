@@ -73,10 +73,7 @@ Get the url function for the series name.
 # Returns
 - Function: The url function for the series name.
 """
-function get_url_function(
-    market::PjmMarket,
-    series_name::String,
-)::Function
+function get_url_function(market::PjmMarket, series_name::String)::Function
     av_time_series = available_time_series(market)
     available_names = map(x -> x.name, av_time_series)
     @assert series_name in available_names "Series name not available for the given market."
@@ -98,7 +95,8 @@ Get the start and end date for each day in the range.
 """
 function get_dates(
     start_date::ZonedDateTime,
-    end_date::ZonedDateTime,)::Vector{Tuple{ZonedDateTime, ZonedDateTime}}
+    end_date::ZonedDateTime,
+)::Vector{Tuple{ZonedDateTime,ZonedDateTime}}
     # get the start and end date for each month in the range
     dates = []
 
@@ -123,10 +121,7 @@ Read the data from the url.
 # Returns
 - DataFrame: The data read from the url.
 """
-function read_url(
-    url::AbstractString,
-    access_key_dict::Dict,
-)::DataFrame
+function read_url(url::AbstractString, access_key_dict::Dict)::DataFrame
     # get the data from the url
     response = HTTP.get(url, headers = access_key_dict)
     # read the data into a DataFrame

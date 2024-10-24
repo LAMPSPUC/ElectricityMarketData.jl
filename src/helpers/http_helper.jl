@@ -25,7 +25,11 @@ end
 
 Downloads the 'url' and saves it to 'filename' asynchronously. Return the tasks.
 """
-function _async_download(url::AbstractString, filename::AbstractString, headers::Dict = Dict())::Task
+function _async_download(
+    url::AbstractString,
+    filename::AbstractString,
+    headers::Dict = Dict(),
+)::Task
     return @async _download(url, filename, headers)
 end
 

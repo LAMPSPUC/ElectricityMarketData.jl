@@ -30,7 +30,7 @@ function _async_get_raw_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
     directory::AbstractString,
-    access_key_dict::Dict{String, String},
+    access_key_dict::Dict{String,String},
     url_function::Function,
     series_name::String,
     download::Bool = true,
@@ -39,42 +39,29 @@ function _async_get_raw_data(
     dates = get_dates(start_date, end_date)
     # Loop over each day
     tasks = Vector{Task}()
- 
+
     for date in dates
 
-        st_date = date[1]; ed_date = date[2]
+        st_date = date[1]
+        ed_date = date[2]
 
         start_date_str, start_hour_minute, end_date_str, end_hour_minute =
-        get_str_dates(st_date, ed_date, market)
-    
-        url = url_function(
-            start_date_str,
-            start_hour_minute,
-            end_date_str,
-            end_hour_minute,
+            get_str_dates(st_date, ed_date, market)
+
+        url = url_function(start_date_str, start_hour_minute, end_date_str, end_hour_minute)
+
+        file_path = joinpath(
+            directory,
+            series_name * get_str_dates_file_name(st_date, ed_date, market) * ".csv",
         )
-    
-        file_path = joinpath(directory, series_name * get_str_dates_file_name(st_date, ed_date, market) * ".csv")
-       
+
         if download
-            append!(
-                tasks,
-                [_async_download(
-                    url,
-                    file_path,
-                    access_key_dict,
-                )],
-            )
+            append!(tasks, [_async_download(url, file_path, access_key_dict)])
         else
-            append!(
-                tasks,
-                [@async read_url(
-                    url, access_key_dict
-                )],
-            )
-            
+            append!(tasks, [@async read_url(url, access_key_dict)])
+
         end
-     
+
     end
 
     return tasks
@@ -103,7 +90,7 @@ function _get_raw_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
     directory::AbstractString,
-    access_key_dict::Dict{String, String},
+    access_key_dict::Dict{String,String},
     url_function::Function,
     series_name::String,
     download::Bool = true,

@@ -98,5 +98,5 @@ function get_pjm_lmp_raw_data(
         return df
 
     end
-    
+
 end
