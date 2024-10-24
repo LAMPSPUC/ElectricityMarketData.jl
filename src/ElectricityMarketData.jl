@@ -35,6 +35,7 @@ include("miso/utils.jl")
 include("pjm/pjm_market.jl")
 include("pjm/urls.jl")
 include("pjm/utils.jl")
+include("pjm/async_utils.jl")
 include("pjm/parser.jl")
 
 end # module
