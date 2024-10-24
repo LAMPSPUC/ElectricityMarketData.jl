@@ -21,9 +21,9 @@
             market,
             "RT-LMP",
             ZonedDateTime(DateTime(2024, 1, 1, 0, 0), tz"UTC-4"),
-            ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4"),
-            "",
-            false
+            ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4");
+            folder = "",
+            download = false
         )
         @test typeof(df_raw) == DataFrame
     end
