@@ -71,3 +71,22 @@ function _async_download(
     end
     return tasks
 end
+
+"""
+    read_url(url::AbstractString, access_key_dict::Dict)::DataFrame
+
+Read the data from the url.
+
+# Arguments
+- url::AbstractString: The url to read the data from.
+- access_key_dict::Dict: The access key dictionary.
+
+# Returns
+- DataFrame: The data read from the url.
+"""
+function read_url(url::AbstractString, access_key_dict::Dict)::DataFrame
+    # get the data from the url
+    response = HTTP.get(url, headers = access_key_dict)
+    # read the data into a DataFrame
+    CSV.read(IOBuffer(response.body), DataFrame)
+end
