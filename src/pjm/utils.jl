@@ -52,12 +52,9 @@ function get_str_dates_file_name(
     zd_start_date = astimezone(start_date, market.timezone)
     zd_end_date = astimezone(end_date, market.timezone)
 
-    start_date_str = Dates.format(zd_start_date, "m/d/yyyy HH:MM")
-    end_date_str = Dates.format(zd_end_date, "m/d/yyyy HH:MM")
+    start_date_str = Dates.format(zd_start_date, "m-d-yyyy HH:MM")
+    end_date_str = Dates.format(zd_end_date, "m-d-yyyy HH:MM")
 
-    # convert `/` to `-` in the date string
-    start_date_str = replace(start_date_str, "/" => "-")
-    end_date_str = replace(end_date_str, "/" => "-")
     return " from " * start_date_str * " to " * end_date_str
 end
 
