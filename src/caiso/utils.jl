@@ -67,18 +67,16 @@ function _get_data(
     tasks = _async_get_raw_data(market, serie, start_date, end_date, folder)
     dfs = Vector{DataFrame}()
     for task in tasks
+        temp = nothing
         for file_name in _unzip(fetch(task), x -> serie * "_" * x)
             df = CSV.read(file_name, DataFrame)
-            push!(
-                dfs,
-                unstack(
-                    df,
-                    [:INTERVALSTARTTIME_GMT, :MARKET_RUN_ID, :NODE],
-                    :LMP_TYPE,
-                    :MW,
-                ),
-            )
+            pivot =
+                unstack(df, [:INTERVALSTARTTIME_GMT, :MARKET_RUN_ID, :NODE], :LMP_TYPE, :MW)
+            temp =
+                isnothing(temp) ? pivot :
+                outerjoin(temp, pivot, on = [:INTERVALSTARTTIME_GMT, :MARKET_RUN_ID, :NODE])
         end
+        push!(dfs, temp)
     end
     df = vcat(dfs...)
     rename!(

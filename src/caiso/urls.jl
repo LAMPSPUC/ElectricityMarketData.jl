@@ -24,5 +24,6 @@ function _get_caiso_price_url(
     stopdate::AbstractString,
     market_run_id::AbstractString,
 )::AbstractString
-    return _get_caiso_url("PRC_INTVL_LMP", startdate, stopdate, market_run_id)
+    queryname = market_run_id == "RTM" ? "PRC_INTVL_LMP" : "PRC_LMP"
+    return _get_caiso_url(queryname, startdate, stopdate, market_run_id)
 end
