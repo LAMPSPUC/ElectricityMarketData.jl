@@ -37,4 +37,7 @@ include("pjm/urls.jl")
 include("pjm/utils.jl")
 include("pjm/parser.jl")
 
+#caiso
+include("caiso/urls.jl")
+
 end # module
