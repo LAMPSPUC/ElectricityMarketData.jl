@@ -92,7 +92,9 @@ function get_real_time_lmp(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-) end
+)
+    return _get_data(market, "RTM", start_date, end_date, folder)
+end
 
 """
     get_day_ahead_lmp(market::CaisoMarket, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString=tempdir()) :: Tables.table
@@ -105,4 +107,6 @@ function get_day_ahead_lmp(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
-) end
+)
+    return _get_data(market, "DAM", start_date, end_date, folder)
+end
