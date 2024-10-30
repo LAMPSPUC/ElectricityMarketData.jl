@@ -25,6 +25,7 @@ export ElectricityMarket,
 
 # general
 include("helpers/http_helper.jl")
+include("helpers/zip_helper.jl")
 include("electricity_market.jl")
 
 #miso
@@ -38,7 +39,9 @@ include("pjm/utils.jl")
 include("pjm/parser.jl")
 
 #caiso
+include("caiso/caiso_market.jl")
 include("caiso/datetime.jl")
 include("caiso/urls.jl")
+include("caiso/utils.jl")
 
 end # module
