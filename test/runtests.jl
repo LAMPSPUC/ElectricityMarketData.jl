@@ -3,12 +3,14 @@ using Dates
 using TimeZones
 using Test
 using HTTP
+using ZipFile
 using DataFrames
 using CSV
 
 import ElectricityMarketData: get_timezone
 
 # general
+include("helpers/zip_helper.jl")
 include("helpers/http_helper.jl")
 include("electricity_market.jl")
 #miso
