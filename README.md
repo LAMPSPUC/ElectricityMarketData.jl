@@ -7,8 +7,8 @@
 
 |     Data      |  PJM  | MISO  | CAISO |
 | ------------- | :---: | :---: | :---: |
-| Real Time LMP |  ❌  |  ✔️   |   ❌   |
-| Day-ahead LMP |  ✔️  |  ✔️   |   ❌   |
+| Real Time LMP |  ❌  |  ✔️   |   ✔️   |
+| Day-ahead LMP |  ✔️  |  ✔️   |   ✔️   |
 | Load          |  ❌  |   ❌   |   ❌   |
 
 Example of getting data from PJM
