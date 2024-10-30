@@ -1,11 +1,13 @@
 """
-    _async_get_raw_data(market::CaisoMarket, serie::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)::Vector{Task}
+    _async_get_raw_data(market::CaisoMarket, serie::AbstractString, period::Period, func::Function, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)::Vector{Task}
 
 Download the 'func' raw data for the given `market` and `start_date` to `end_date` and save it in `folder`.
 """
 function _async_get_raw_data(
     market::CaisoMarket,
     serie::AbstractString,
+    period::Period,
+    func::Function,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
     folder::AbstractString,
@@ -15,9 +17,9 @@ function _async_get_raw_data(
     date = start_date
     while date < end_date
         start_formated = _get_zdt_formated(date)
-        next = date + Day(1)
+        next = date + period
         end_formated = _get_zdt_formated(next)
-        url = _get_caiso_price_url(start_formated, end_formated, serie)
+        url = func(start_formated, end_formated)
         push!(
             tasks,
             _async_download(
@@ -34,18 +36,20 @@ function _async_get_raw_data(
 end
 
 """
-    _get_raw_data(market::CaisoMarket, serie::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)::Nothing
+    _get_raw_data(market::CaisoMarket, serie::AbstractString, period::Period, func::Function, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)::Nothing
 
 Download the 'func' raw data for the given `market` and `start_date` to `end_date` and save it in `folder`.
 """
 function _get_raw_data(
     market::CaisoMarket,
     serie::AbstractString,
+    period::Period,
+    func::Function,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
     folder::AbstractString,
 )::Nothing
-    tasks = _async_get_raw_data(market, serie, start_date, end_date, folder)
+    tasks = _async_get_raw_data(market, serie, period, func, start_date, end_date, folder)
     for task in tasks
         _ = _unzip(fetch(task), x -> serie * "_" * x)
     end
@@ -53,18 +57,20 @@ function _get_raw_data(
 end
 
 """
-    _get_data(market::CaisoMarket, serie::AbstractString, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)
+    _get_data(market::CaisoMarket, serie::AbstractString, period::Period, func::Function, start_date::ZonedDateTime, end_date::ZonedDateTime; folder::AbstractString)
 
 Download the 'func' raw data for the given `market` and `start_date` to `end_date` and save it in `folder`.
 """
 function _get_data(
     market::CaisoMarket,
     serie::AbstractString,
+    period::Period,
+    func::Function,
     start_date::ZonedDateTime,
     end_date::ZonedDateTime,
     folder::AbstractString,
 )
-    tasks = _async_get_raw_data(market, serie, start_date, end_date, folder)
+    tasks = _async_get_raw_data(market, serie, period, func, start_date, end_date, folder)
     dfs = Vector{DataFrame}()
     for task in tasks
         temp = nothing

@@ -64,7 +64,15 @@ function get_real_time_lmp_raw_data(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
 )::Nothing
-    return _get_raw_data(market, "RTM", start_date, end_date, folder)
+    return _get_raw_data(
+        market,
+        "RTM",
+        Hour(1),
+        _get_caiso_real_time_url,
+        start_date,
+        end_date,
+        folder,
+    )
 end
 
 """
@@ -78,7 +86,15 @@ function get_day_ahead_lmp_raw_data(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
 )::Nothing
-    return _get_raw_data(market, "DAM", start_date, end_date, folder)
+    return _get_raw_data(
+        market,
+        "DAM",
+        Day(1),
+        _get_caiso_day_ahead_url,
+        start_date,
+        end_date,
+        folder,
+    )
 end
 
 """
@@ -93,7 +109,15 @@ function get_real_time_lmp(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
 )
-    return _get_data(market, "RTM", start_date, end_date, folder)
+    return _get_data(
+        market,
+        "RTM",
+        Hour(1),
+        _get_caiso_real_time_url,
+        start_date,
+        end_date,
+        folder,
+    )
 end
 
 """
@@ -108,5 +132,13 @@ function get_day_ahead_lmp(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
 )
-    return _get_data(market, "DAM", start_date, end_date, folder)
+    return _get_data(
+        market,
+        "DAM",
+        Day(1),
+        _get_caiso_day_ahead_url,
+        start_date,
+        end_date,
+        folder,
+    )
 end
