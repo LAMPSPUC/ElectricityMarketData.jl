@@ -7,7 +7,7 @@
 
 |     Data      |  PJM  | MISO  | CAISO |
 | ------------- | :---: | :---: | :---: |
-| Real Time LMP |  ❌  |  ✔️   |   ❌   |
+| Real Time LMP |  ✔️  |  ✔️   |   ❌   |
 | Day-ahead LMP |  ✔️  |  ✔️   |   ❌   |
 | Load          |  ❌  |   ❌   |   ❌   |
 
@@ -19,16 +19,10 @@ using Dates
 using TimeZones
 import TimeZones: ZonedDateTime
 market = ElectricityMarketData.PjmMarket()
-df_raw = ElectricityMarketData.get_day_ahead_lmp(
-    market,
-    ZonedDateTime(DateTime(2024, 1, 1, 0, 0), tz"UTC-4"),
-    ZonedDateTime(DateTime(2024, 1, 1, 1, 0), tz"UTC-4"),
+df = ElectricityMarketData.get_real_time_lmp(market,
+                                            DateTime(2023, 12, 1, 0, 0),
+                                            DateTime(2024, 1, 3, 1, 0)
 )
-parsed_data = ElectricityMarketData.parse_df_format(
-            df,
-            ElectricityMarketData.PJMDayAheadHourlyLMP_values_keys,
-            ElectricityMarketData.PJMDayAheadHourlyLMP_meta_keys,
-        )
 ```
 
 Example of getting data from MISO

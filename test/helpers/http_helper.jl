@@ -38,4 +38,18 @@
             @test isfile(temp_filename_zip)
         end
     end
+
+    @testset "read_url" begin
+        url = ElectricityMarketData.get_url_day_ahead_lmp(
+            "1/1/2024",
+            "00:00",
+            "1/1/2024",
+            "01:00",
+        )
+        df = ElectricityMarketData.read_url(
+            url,
+            ElectricityMarketData.get_acess_key_headers(),
+        )
+        @test typeof(df) == DataFrame
+    end
 end
