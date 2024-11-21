@@ -19,17 +19,10 @@ using Dates
 using TimeZones
 import TimeZones: ZonedDateTime
 market = ElectricityMarketData.PjmMarket()
-df = ElectricityMarketData.get_pjm_lmp_raw_data(market,
-                                            "RT-LMP",
-                                            ZonedDateTime(DateTime(2023, 12, 1, 0, 0), tz"UTC-4"),
-                                            ZonedDateTime(DateTime(2024, 1, 3, 1, 0), tz"UTC-4");
-                                            download = true)
-                                            
-parsed_data = ElectricityMarketData.parse_df_format(
-            df,
-            ElectricityMarketData.PJMDayAheadHourlyLMP_values_keys,
-            ElectricityMarketData.PJMDayAheadHourlyLMP_meta_keys,
-        )
+df = ElectricityMarketData.get_real_time_lmp(market,
+                                            DateTime(2023, 12, 1, 0, 0),
+                                            DateTime(2024, 1, 3, 1, 0)
+)
 ```
 
 Example of getting data from MISO
