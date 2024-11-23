@@ -66,6 +66,7 @@ function get_pjm_lmp_raw_data(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
     download::Bool = true,
+    kwargs..., # additional keyword arguments - to be extended in the future
 )
 
     url_function = get_url_function(market, series_name)
@@ -114,6 +115,7 @@ function get_real_time_lmp(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
     download::Bool = false,
+    kwargs..., # additional keyword arguments - to be extended in the future
 )
     return get_pjm_lmp_raw_data(
         market,
@@ -122,6 +124,7 @@ function get_real_time_lmp(
         end_date;
         folder = folder,
         download = download,
+        kwargs...,
     )
 end
 
@@ -137,6 +140,7 @@ function get_day_ahead_lmp(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
     download::Bool = false,
+    kwargs..., # additional keyword arguments - to be extended in the future
 )
     return get_pjm_lmp_raw_data(
         market,
@@ -145,5 +149,6 @@ function get_day_ahead_lmp(
         end_date;
         folder = folder,
         download = download,
+        kwargs...,
     )
 end

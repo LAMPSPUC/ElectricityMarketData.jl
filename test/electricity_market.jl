@@ -86,5 +86,77 @@
                 ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
             )
         end
+
+        @testset "get_load_raw_data" begin
+            @test_throws MethodError get_load_raw_data(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
+
+            @test_throws MethodError get_load_raw_data(
+                market,
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+            )
+        end
+
+        @testset "get_load" begin
+            @test_throws MethodError get_load(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
+
+            @test_throws MethodError get_load(
+                market,
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+            )
+        end
+
+        @testset "get_load_forecast_raw_data" begin
+            @test_throws MethodError get_load_forecast_raw_data(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
+
+            @test_throws MethodError get_load_forecast_raw_data(
+                market,
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+            )
+        end
+
+        @testset "get_load_forecast" begin
+            @test_throws MethodError get_load_forecast(
+                market,
+                DateTime("2021-01-01T00:00:00"),
+                DateTime("2021-01-01T00:00:00"),
+            )
+
+            @test_throws MethodError get_load_forecast(
+                market,
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+                ZonedDateTime(DateTime("2021-01-01T00:00:00"), tz"UTC"),
+            )
+        end
+
+        @testset "real_time_lmp_data_types" begin
+            @test_throws MethodError real_time_lmp_data_types(market)
+        end
+
+        @testset "real_time_lmp_frequency" begin
+            @test_throws MethodError real_time_lmp_frequency(market)
+        end
+
+        @testset "load_data_types" begin
+            @test_throws MethodError load_data_types(market)
+        end
+
+        @testset "load_forecast_data_types" begin
+            @test_throws MethodError load_forecast_data_types(market)
+        end
     end
 end

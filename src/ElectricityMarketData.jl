@@ -21,7 +21,15 @@ export ElectricityMarket,
     get_day_ahead_lmp_raw_data,
     get_day_ahead_lmp,
     get_timezone,
-    ZonedDateTime
+    ZonedDateTime,
+    get_load_forecast_raw_data,
+    get_load_forecast,
+    get_load_raw_data,
+    get_load,
+    load_data_types,
+    real_time_lmp_data_types,
+    real_time_lmp_frequency,
+    load_forecast_data_types
 
 # general
 include("helpers/http_helper.jl")
