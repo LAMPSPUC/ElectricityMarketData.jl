@@ -71,7 +71,7 @@ function get_real_time_lmp_raw_data(
     locations::Vector{T} = [],
     data_type::Symbol = :verified,
     frequency::Symbol = :hourly,
-)::Nothing where T
+)::Nothing where {T}
     throw(MethodError(get_real_time_lmp_raw_data, (market, start_date, end_date)))
 end
 
@@ -83,7 +83,7 @@ function get_real_time_lmp_raw_data(
     locations::Vector{T} = [],
     data_type::Symbol = :verified,
     frequency::Symbol = :hourly,
-)::Nothing where T
+)::Nothing where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_real_time_lmp_raw_data(
         market,
@@ -117,7 +117,7 @@ function get_real_time_lmp(
     locations::Vector{T} = [],
     data_type::Symbol = :verified,
     frequency::Symbol = :hourly,
-) where T
+) where {T}
     throw(MethodError(get_real_time_lmp, (market, start_date, end_date)))
 end
 
@@ -129,7 +129,7 @@ function get_real_time_lmp(
     locations::Vector{T} = [],
     data_type::Symbol = :verified,
     frequency::Symbol = :hourly,
-) where T
+) where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_real_time_lmp(
         market,
@@ -191,7 +191,7 @@ function get_day_ahead_lmp_raw_data(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
-)::Nothing where T
+)::Nothing where {T}
     throw(MethodError(get_day_ahead_lmp_raw_data, (market, start_date, end_date)))
 end
 
@@ -201,7 +201,7 @@ function get_day_ahead_lmp_raw_data(
     end_date::DateTime;
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
-)::Nothing where T
+)::Nothing where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_day_ahead_lmp_raw_data(
         market,
@@ -229,7 +229,7 @@ function get_day_ahead_lmp(
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
-) where T
+) where {T}
     throw(MethodError(get_day_ahead_lmp, (market, start_date, end_date)))
 end
 
@@ -239,7 +239,7 @@ function get_day_ahead_lmp(
     end_date::DateTime;
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
-) where T
+) where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_day_ahead_lmp(
         market,
@@ -268,7 +268,7 @@ function get_load_raw_data(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :metered,
-)::Nothing where T
+)::Nothing where {T}
     throw(MethodError(get_load_raw_data, (market, start_date, end_date)))
 end
 
@@ -279,7 +279,7 @@ function get_load_raw_data(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :metered,
-)::Nothing where T
+)::Nothing where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_load_raw_data(
         market,
@@ -310,7 +310,7 @@ function get_load(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :metered,
-) where T
+) where {T}
     throw(MethodError(get_load, (market, start_date, end_date)))
 end
 
@@ -321,7 +321,7 @@ function get_load(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :metered,
-) where T
+) where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_load(
         market,
@@ -369,7 +369,7 @@ function get_load_forecast_raw_data(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :fivemin,
-)::Nothing where T
+)::Nothing where {T}
     throw(MethodError(get_load_forecast_raw_data, (market, start_date, end_date)))
 end
 
@@ -380,7 +380,7 @@ function get_load_forecast_raw_data(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :fivemin,
-)::Nothing where T
+)::Nothing where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_load_forecast_raw_data(
         market,
@@ -411,7 +411,7 @@ function get_load_forecast(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :fivemin,
-) where T
+) where {T}
     throw(MethodError(get_load_forecast, (market, start_date, end_date)))
 end
 
@@ -422,7 +422,7 @@ function get_load_forecast(
     folder::AbstractString = tempdir(),
     locations::Vector{T} = [],
     data_type::Symbol = :fivemin,
-) where T
+) where {T}
     @info "Converting DateTime to ZonedDateTime using the timezone of $(market)"
     get_load_forecast(
         market,
