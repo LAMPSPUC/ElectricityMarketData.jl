@@ -63,6 +63,7 @@ function get_real_time_lmp_raw_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
+    kwargs..., # additional keyword arguments - to be extended in the future
 )::Nothing
     _get_raw_data(
         market,
@@ -86,6 +87,7 @@ function get_day_ahead_lmp_raw_data(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
+    kwargs..., # additional keyword arguments - to be extended in the future
 )::Nothing
     _get_raw_data(
         market,
@@ -110,6 +112,7 @@ function get_real_time_lmp(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
+    kwargs..., # additional keyword arguments - to be extended in the future
 )
     return _get_data(
         market,
@@ -134,6 +137,7 @@ function get_day_ahead_lmp(
     start_date::ZonedDateTime,
     end_date::ZonedDateTime;
     folder::AbstractString = tempdir(),
+    kwargs..., # additional keyword arguments - to be extended in the future
 )
     return _get_data(
         market,
